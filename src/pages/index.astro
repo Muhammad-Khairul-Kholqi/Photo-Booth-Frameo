@@ -1,11 +1,14 @@
 ---
-import Welcome from '../components/Welcome.astro';
 import Layout from '../layouts/Layout.astro';
-
-// Welcome to Astro! Wondering what to do next? Check out the Astro documentation at https://docs.astro.build
-// Don't want to use any of this? Delete everything in this file, the `assets`, `components`, and `layouts` directories, and start fresh.
+import HeroSection from '../components/section/home/HeroSection.astro';
+import FeaturesSection from '../components/section/home/FeaturesSection.astro';
 ---
 
 <Layout>
-	<Welcome />
+	<div class="flex justify-center px-5 py-10">
+		<div class="w-full max-w-[1500px]"> 
+			<HeroSection />
+			<FeaturesSection />
+		</div>
+	</div>
 </Layout>

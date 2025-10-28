@@ -1,0 +1,25 @@
+---
+import { Camera, Palette, Download } from '@lucide/astro';
+---
+
+<div class="mt-10 flex justify-center">
+    <div class="w-full max-w-[800px] grid lg:grid-cols-3 md:grid-cols-2 sm:grid-cols-2 grid-cols-1 gap-5">
+        <div class="border border-gray-200 rounded-xl flex flex-col items-center text-center p-10">
+            <Camera class="w-8 h-8 text-purple-600" />
+            <h2 class="mt-5 font-semibold text-xl">Multiple Layouts</h2>
+            <p class="mt-1 text-gray-600">Choose 2, 3, or 4 photo layouts</p>
+        </div>
+
+        <div class="border border-gray-200 rounded-xl flex flex-col items-center text-center p-10">
+            <Palette class="w-8 h-8 text-purple-600" />
+            <h2 class="mt-5 font-semibold text-xl">Creative Filters</h2>
+            <p class="mt-1 text-gray-600">Apply fun AR filters and effects</p>
+        </div>
+
+        <div class="border border-gray-200 rounded-xl flex flex-col items-center text-center p-10">
+            <Download class="w-8 h-8 text-purple-600" />
+            <h2 class="mt-5 font-semibold text-xl">HD Download</h2>
+            <p class="mt-1 text-gray-600">Save your creations in high quality</p>
+        </div>
+    </div>
+</div>  
