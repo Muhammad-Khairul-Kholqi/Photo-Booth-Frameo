@@ -2,5 +2,38 @@
     <h2 class="text-xl font-bold mb-1">Caption</h2>
     <p class="text-gray-600">Write an interesting caption</p>
 
-    <input type="text" class="w-full mt-5 p-3 border border-gray-300 rounded-lg focus:outline-none focus:border-purple-300 transition-colors" placeholder="Enter your caption here" />
+    <input 
+        type="text" 
+        id="captionInput"
+        class="w-full mt-5 p-3 border border-gray-300 rounded-lg focus:outline-none focus:border-purple-300 transition-colors" 
+        placeholder="Enter your caption here" 
+        maxlength="100"
+    />
 </div>
+
+<script>
+  import { photoBoothStore } from '../../../utils/photoBoothStore.js';
+
+  function initCaption() {
+    const settings = photoBoothStore.getSettings();
+    const input = document.getElementById('captionInput');
+    
+    if (input) {
+      input.value = settings.caption;
+
+      input.addEventListener('input', (e) => {
+        const newSettings = photoBoothStore.getSettings();
+        newSettings.caption = e.target.value || 'Special Moment';
+        photoBoothStore.saveSettings(newSettings);
+
+        window.dispatchEvent(new CustomEvent('photoBoothSettingsChanged'));
+      });
+    }
+  }
+
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', initCaption);
+  } else {
+    initCaption();
+  }
+</script>

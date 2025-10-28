@@ -2,25 +2,66 @@
     <h2 class="text-xl font-bold mb-1">Countdown Timer</h2>
     <p class="text-gray-600">Set the delay before capturing each photo</p>
 
-    <div class="mt-5 grid grid-cols-2 gap-3">
-        <div class="w-full border border-gray-300 hover:border-purple-300 transition-color p-3 rounded-lg cursor-pointer flex items-center gap-5">
-            <div class="p-2 border border-gray-200 rounded-full" />
-            <p class="font-semibold">1 Seconds</p>
+    <div class="mt-5 grid grid-cols-2 gap-3" id="countdownOptions">
+        <div class="countdown-option w-full border border-gray-300 hover:border-purple-300 transition-color p-3 rounded-lg cursor-pointer flex items-center gap-5" data-countdown="1">
+            <div class="radio-indicator p-2 border-2 border-gray-300 rounded-full"></div>
+            <p class="font-semibold">1 Second</p>
         </div>
 
-        <div class="w-full border border-gray-300 hover:border-purple-300 transition-color p-3 rounded-lg cursor-pointer flex items-center gap-5">
-            <div class="p-2 border border-gray-200 rounded-full" />
+        <div class="countdown-option w-full border border-gray-300 hover:border-purple-300 transition-color p-3 rounded-lg cursor-pointer flex items-center gap-5" data-countdown="2">
+            <div class="radio-indicator p-2 border-2 border-gray-300 rounded-full"></div>
             <p class="font-semibold">2 Seconds</p>
         </div>
 
-        <div class="w-full border border-gray-300 hover:border-purple-300 transition-color p-3 rounded-lg cursor-pointer flex items-center gap-5">
-            <div class="p-2 border border-gray-200 rounded-full" />
+        <div class="countdown-option w-full border border-gray-300 hover:border-purple-300 transition-color p-3 rounded-lg cursor-pointer flex items-center gap-5" data-countdown="3">
+            <div class="radio-indicator p-2 border-2 border-gray-300 rounded-full"></div>
             <p class="font-semibold">3 Seconds</p>
         </div>
 
-        <div class="w-full border border-gray-300 hover:border-purple-300 transition-color p-3 rounded-lg cursor-pointer flex items-center gap-5">
-            <div class="p-2 border border-gray-200 rounded-full" />
+        <div class="countdown-option w-full border border-gray-300 hover:border-purple-300 transition-color p-3 rounded-lg cursor-pointer flex items-center gap-5" data-countdown="4">
+            <div class="radio-indicator p-2 border-2 border-gray-300 rounded-full"></div>
             <p class="font-semibold">4 Seconds</p>
         </div>
     </div>
 </div>
+
+<script>
+  import { photoBoothStore } from '../../../utils/photoBoothStore.js';
+
+  function initCountdownTimer() {
+    const settings = photoBoothStore.getSettings();
+    const options = document.querySelectorAll('.countdown-option');
+
+    options.forEach(option => {
+      const countdown = parseInt(option.getAttribute('data-countdown'));
+      const indicator = option.querySelector('.radio-indicator');
+      
+      if (countdown === settings.countdown) {
+        option.classList.add('border-purple-500', 'bg-purple-50');
+        indicator.classList.add('bg-purple-500');
+      }
+
+      option.addEventListener('click', () => {
+        options.forEach(opt => {
+          opt.classList.remove('border-purple-500', 'bg-purple-50');
+          opt.querySelector('.radio-indicator').classList.remove('bg-purple-500');
+        });
+
+        option.classList.add('border-purple-500', 'bg-purple-50');
+        indicator.classList.add('bg-purple-500');
+
+        const newSettings = photoBoothStore.getSettings();
+        newSettings.countdown = countdown;
+        photoBoothStore.saveSettings(newSettings);
+
+        window.dispatchEvent(new CustomEvent('photoBoothSettingsChanged'));
+      });
+    });
+  }
+
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', initCountdownTimer);
+  } else {
+    initCountdownTimer();
+  }
+</script>

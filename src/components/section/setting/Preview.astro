@@ -3,11 +3,7 @@
 
     <div class="mt-4 sm:mt-5">
         <p class="text-sm sm:text-base text-gray-600">Layout</p>
-        <div class="bg-black p-3 rounded-lg grid grid-cols-2 gap-2 sm:gap-3 mt-3">
-            <div class="bg-white h-24 sm:h-28 md:h-30 border border-gray-300 rounded-lg" />
-            <div class="bg-white h-24 sm:h-28 md:h-30 border border-gray-300 rounded-lg" />
-            <div class="bg-white h-24 sm:h-28 md:h-30 border border-gray-300 rounded-lg" />
-            <div class="bg-white h-24 sm:h-28 md:h-30 border border-gray-300 rounded-lg" />
+        <div id="layoutPreview" class="p-3 rounded-lg mt-3">
         </div>
     </div>
 
@@ -16,21 +12,112 @@
     <div class="space-y-3">
         <div>
             <p class="text-sm sm:text-base text-gray-600">Countdown</p>
-            <p class="text-sm sm:text-base font-bold">3s</p>
+            <p id="countdownPreview" class="text-sm sm:text-base font-bold">3s</p>
+        </div>
+
+        <div>
+            <p class="text-sm sm:text-base text-gray-600">Caption</p>
+            <p id="captionPreview" class="text-sm sm:text-base font-bold">Special Moment</p>
         </div>
 
         <div>
             <p class="text-sm sm:text-base text-gray-600">Background</p>
-            <p class="text-sm sm:text-base font-bold">white</p>
+            <p id="backgroundPreview" class="text-sm sm:text-base font-bold">White</p>
         </div>
     </div>
 
     <div class="space-y-3 mt-5">
-        <button class="w-full p-2.5 sm:p-3 text-sm sm:text-base bg-purple-500 hover:bg-purple-600 text-white rounded-lg cursor-pointer transition-colors">
+        <button id="startPhotoBoothBtn" class="w-full p-2.5 sm:p-3 text-sm sm:text-base bg-purple-500 hover:bg-purple-600 text-white rounded-lg cursor-pointer transition-colors">
             Start Photo Booth
         </button>
-        <button class="w-full p-2.5 sm:p-3 text-sm sm:text-base border border-gray-200 text-gray-600 hover:bg-gray-100 rounded-lg cursor-pointer transition-colors">
+        <button id="resetDefaultsBtn" class="w-full p-2.5 sm:p-3 text-sm sm:text-base border border-gray-200 text-gray-600 hover:bg-gray-100 rounded-lg cursor-pointer transition-colors">
             Reset to Defaults
         </button>
     </div>
 </div>
+
+<script>
+  import { photoBoothStore } from '../../../utils/photoBoothStore.js';
+
+  function getBackgroundClass(bg) {
+    const backgrounds = {
+      'white': 'bg-white',
+      'black': 'bg-black',
+      'red': 'bg-red-500',
+      'blue': 'bg-blue-500',
+      'gradient': 'bg-gradient-to-br from-blue-500 to-purple-500'
+    };
+    return backgrounds[bg] || 'bg-white';
+  }
+
+  function updatePreview() {
+    const settings = photoBoothStore.getSettings();
+    const layoutInfo = photoBoothStore.getLayoutInfo(settings.layout);
+    
+    const layoutPreview = document.getElementById('layoutPreview');
+    if (layoutPreview) {
+      const bgClass = getBackgroundClass(settings.background);
+      layoutPreview.className = `${bgClass} p-3 rounded-lg mt-3`;
+      
+      let gridClass = '';
+      if (settings.layout === '2x1' || settings.layout === '2x2') {
+        gridClass = 'grid grid-cols-2 gap-2 sm:gap-3';
+      } else if (settings.layout === '3x1') {
+        gridClass = 'grid grid-cols-3 gap-2 sm:gap-3';
+      }
+      
+      layoutPreview.innerHTML = `
+        <div class="${gridClass}">
+          ${Array(layoutInfo.count).fill(0).map(() => 
+            '<div class="bg-white h-24 sm:h-28 md:h-30 border border-gray-300 rounded-lg flex items-center justify-center text-gray-400 text-xs">Photo</div>'
+          ).join('')}
+        </div>
+      `;
+    }
+
+    const countdownPreview = document.getElementById('countdownPreview');
+    if (countdownPreview) {
+      countdownPreview.textContent = `${settings.countdown}s`;
+    }
+
+    const captionPreview = document.getElementById('captionPreview');
+    if (captionPreview) {
+      captionPreview.textContent = settings.caption;
+    }
+
+    const backgroundPreview = document.getElementById('backgroundPreview');
+    if (backgroundPreview) {
+      backgroundPreview.textContent = settings.background.charAt(0).toUpperCase() + settings.background.slice(1);
+    }
+  }
+
+  function initPreview() {
+    updatePreview();
+
+    window.addEventListener('photoBoothSettingsChanged', updatePreview);
+
+    const startBtn = document.getElementById('startPhotoBoothBtn');
+    if (startBtn) {
+      startBtn.addEventListener('click', () => {
+        photoBoothStore.clearPhotos();
+        window.location.href = '/camera';
+      });
+    }
+
+    const resetBtn = document.getElementById('resetDefaultsBtn');
+    if (resetBtn) {
+      resetBtn.addEventListener('click', () => {
+        if (confirm('Are you sure you want to reset all settings to defaults?')) {
+          photoBoothStore.resetSettings();
+          window.location.reload();
+        }
+      });
+    }
+  }
+
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', initPreview);
+  } else {
+    initPreview();
+  }
+</script>

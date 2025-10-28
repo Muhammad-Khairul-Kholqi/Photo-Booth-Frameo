@@ -2,40 +2,78 @@
     <h2 class="text-xl font-bold mb-1">Background</h2>
     <p class="text-gray-600">Choose a background for your photos</p>
 
-    <div class="mt-5 grid lg:grid-cols-5 md:grid-cols-3 sm:grid-cols-2 grid-cols-2 gap-3">
-        <div>
-            <div class="h-30 border-2 border-gray-200 rounded-xl hover:scale-105 bg-white duration-300 cursor-pointer" />
+    <div class="mt-5 grid lg:grid-cols-5 md:grid-cols-3 sm:grid-cols-2 grid-cols-2 gap-3" id="backgroundOptions">
+        <div class="bg-option cursor-pointer" data-bg="white" data-label="White">
+            <div class="h-28 border-2 border-gray-300 rounded-xl hover:scale-105 bg-white duration-300 bg-selector"></div>
             <div class="flex justify-center mt-2">
                 <span class="text-sm text-center">White</span>
             </div>
         </div>
 
-        <div>
-            <div class="h-30 border-2 border-gray-200 rounded-xl hover:scale-105 bg-black duration-300 cursor-pointer" />
+        <div class="bg-option cursor-pointer" data-bg="black" data-label="Black">
+            <div class="h-28 border-2 border-gray-300 rounded-xl hover:scale-105 bg-black duration-300 bg-selector"></div>
             <div class="flex justify-center mt-2">
                 <span class="text-sm text-center">Black</span>
             </div>
         </div>
 
-        <div>
-            <div class="h-30 border-2 border-gray-200 rounded-xl hover:scale-105 bg-red-500 duration-300 cursor-pointer" />
+        <div class="bg-option cursor-pointer" data-bg="red" data-label="Red">
+            <div class="h-28 border-2 border-gray-300 rounded-xl hover:scale-105 bg-red-500 duration-300 bg-selector"></div>
             <div class="flex justify-center mt-2">
                 <span class="text-sm text-center">Red</span>
             </div>
         </div>
 
-        <div>
-            <div class="h-30 border-2 border-gray-200 rounded-xl hover:scale-105 duration-300 bg-blue-500 cursor-pointer" />
+        <div class="bg-option cursor-pointer" data-bg="blue" data-label="Blue">
+            <div class="h-28 border-2 border-gray-300 rounded-xl hover:scale-105 duration-300 bg-blue-500 bg-selector"></div>
             <div class="flex justify-center mt-2">
                 <span class="text-sm text-center">Blue</span>
             </div>
         </div>
 
-        <div>
-            <div class="h-30 border-2 border-gray-200 rounded-xl hover:scale-105 bg-gradient-to-br from-blue-500 to-purple-500 duration-300 cursor-pointer" />
+        <div class="bg-option cursor-pointer" data-bg="gradient" data-label="Gradient">
+            <div class="h-28 border-2 border-gray-300 rounded-xl hover:scale-105 bg-gradient-to-br from-blue-500 to-purple-500 duration-300 bg-selector"></div>
             <div class="flex justify-center mt-2">
                 <span class="text-sm text-center">Gradient</span>
             </div>
         </div>
     </div>
 </div>
+
+<script>
+  import { photoBoothStore } from '../../../utils/photoBoothStore.js';
+
+  function initBackground() {
+    const settings = photoBoothStore.getSettings();
+    const options = document.querySelectorAll('.bg-option');
+
+    options.forEach(option => {
+      const bg = option.getAttribute('data-bg');
+      const selector = option.querySelector('.bg-selector');
+      
+      if (bg === settings.background) {
+        selector.classList.add('ring-4', 'ring-purple-500');
+      }
+
+      option.addEventListener('click', () => {
+        options.forEach(opt => {
+          opt.querySelector('.bg-selector').classList.remove('ring-4', 'ring-purple-500');
+        });
+
+        selector.classList.add('ring-4', 'ring-purple-500');
+
+        const newSettings = photoBoothStore.getSettings();
+        newSettings.background = bg;
+        photoBoothStore.saveSettings(newSettings);
+
+        window.dispatchEvent(new CustomEvent('photoBoothSettingsChanged'));
+      });
+    });
+  }
+
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', initBackground);
+  } else {
+    initBackground();
+  }
+</script>

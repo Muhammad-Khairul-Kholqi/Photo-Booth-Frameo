@@ -10,8 +10,11 @@
   },
   "dependencies": {
     "@lucide/astro": "^0.548.0",
+    "@nanostores/persistent": "^1.2.0",
     "@tailwindcss/vite": "^4.1.16",
+    "@vladmandic/face-api": "^1.7.15",
     "astro": "^5.15.1",
+    "nanostores": "^1.0.1",
     "tailwindcss": "^4.1.16"
   }
 }

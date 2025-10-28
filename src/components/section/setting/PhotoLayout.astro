@@ -2,20 +2,61 @@
     <h2 class="text-xl font-bold mb-1">Photo Layout</h2>
     <p class="text-gray-600">Choose how many photos to capture</p>
 
-    <div class="mt-5 flex flex-col gap-3">
-        <div class="w-full border border-gray-300 hover:border-purple-300 transition-color p-3 rounded-lg cursor-pointer flex items-center gap-5">
-            <div class="p-2 border border-gray-200 rounded-full" />
+    <div class="mt-5 flex flex-col gap-3" id="layoutOptions">
+        <div class="layout-option w-full border border-gray-300 hover:border-purple-300 transition-color p-3 rounded-lg cursor-pointer flex items-center gap-5" data-layout="2x1">
+            <div class="radio-indicator p-2 border-2 border-gray-300 rounded-full"></div>
             <p class="font-semibold">2 Photos (2x1) <span class="font-normal text-gray-600 text-sm">Two photos side by side</span></p>
         </div>
 
-        <div class="w-full border border-gray-300 hover:border-purple-300 transition-color p-3 rounded-lg cursor-pointer flex items-center gap-5">
-            <div class="p-2 border border-gray-200 rounded-full" />
-            <p class="font-semibold">3 Photos (3x2) <span class="font-normal text-gray-600 text-sm">Three photos side by side</span></p>
+        <div class="layout-option w-full border border-gray-300 hover:border-purple-300 transition-color p-3 rounded-lg cursor-pointer flex items-center gap-5" data-layout="3x1">
+            <div class="radio-indicator p-2 border-2 border-gray-300 rounded-full"></div>
+            <p class="font-semibold">3 Photos (3x1) <span class="font-normal text-gray-600 text-sm">Three photos side by side</span></p>
         </div>
 
-        <div class="w-full border border-gray-300 hover:border-purple-300 transition-color p-3 rounded-lg cursor-pointer flex items-center gap-5">
-            <div class="p-2 border border-gray-200 rounded-full" />
-            <p class="font-semibold">4 Photos (2x2) <span class="font-normal text-gray-600 text-sm">Four photos side by side</span></p>
+        <div class="layout-option w-full border border-gray-300 hover:border-purple-300 transition-color p-3 rounded-lg cursor-pointer flex items-center gap-5" data-layout="2x2">
+            <div class="radio-indicator p-2 border-2 border-gray-300 rounded-full"></div>
+            <p class="font-semibold">4 Photos (2x2) <span class="font-normal text-gray-600 text-sm">Four photos in 2x2 grid</span></p>
         </div>
     </div>
 </div>
+
+<script>
+  import { photoBoothStore } from '../../../utils/photoBoothStore.js';
+
+  function initPhotoLayout() {
+    const settings = photoBoothStore.getSettings();
+    const options = document.querySelectorAll('.layout-option');
+
+    options.forEach(option => {
+      const layout = option.getAttribute('data-layout');
+      const indicator = option.querySelector('.radio-indicator');
+      
+      if (layout === settings.layout) {
+        option.classList.add('border-purple-500', 'bg-purple-50');
+        indicator.classList.add('bg-purple-500');
+      }
+
+      option.addEventListener('click', () => {
+        options.forEach(opt => {
+          opt.classList.remove('border-purple-500', 'bg-purple-50');
+          opt.querySelector('.radio-indicator').classList.remove('bg-purple-500');
+        });
+
+        option.classList.add('border-purple-500', 'bg-purple-50');
+        indicator.classList.add('bg-purple-500');
+
+        const newSettings = photoBoothStore.getSettings();
+        newSettings.layout = layout;
+        photoBoothStore.saveSettings(newSettings);
+
+        window.dispatchEvent(new CustomEvent('photoBoothSettingsChanged'));
+      });
+    });
+  }
+
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', initPhotoLayout);
+  } else {
+    initPhotoLayout();
+  }
+</script>
