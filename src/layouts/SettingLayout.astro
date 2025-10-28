@@ -1,0 +1,21 @@
+---
+import "../styles/global.css";
+import SettingHeader from "../components/global/SettingHeader.astro";
+import Footer from "../components/global/Footer.astro";
+---
+
+<!doctype html>
+<html lang="en">
+	<head>
+		<meta charset="UTF-8" />
+		<meta name="viewport" content="width=device-width" />
+		<title>Photo Booth Settings | Frameo</title>
+	</head>
+	<body>
+		<SettingHeader />
+		<main class="mt-[78px]">
+			<slot />
+		</main>
+		<Footer />
+	</body>
+</html>
